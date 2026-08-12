@@ -22,7 +22,7 @@ import { exists, rm, mkdirp } from 'fs-extra';
 import { z } from 'zod/v3';
 import { CACHE_DIR, CACHE_FILE } from './constants';
 
-const version = '1';
+const version = '2';
 
 interface CacheEntry {
   hash: string;
@@ -96,7 +96,7 @@ export class PackageDocsCache {
       return this.keyCache.get(pkg)!;
     }
     const name = await this.directoryToName(pkg);
-    const result = await globby('src/**', {
+    const result = await globby(['src/**', 'README*.md'], {
       gitignore: true,
       onlyFiles: true,
       cwd: pkg,
