@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { exec } from 'node:child_process';
-import path from 'node:path';
 import { promisify } from 'node:util';
 import { targetPaths } from '@backstage/cli-common';
 import { resolvePackagePaths } from '../../lib/paths';
@@ -86,7 +85,7 @@ function rebaseFileRegistry(docsJson: any, pkg: string) {
   if (!entries) {
     return;
   }
-  const prefix = pkg.split(path.sep).join('/');
+  const prefix = pkg.replace(/\\/g, '/');
   for (const [id, filePath] of Object.entries(entries)) {
     entries[id] = filePath ? `${prefix}/${filePath}` : prefix;
   }
