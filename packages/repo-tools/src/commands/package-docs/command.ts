@@ -71,6 +71,26 @@ function getExports(packageJson: any) {
   return [packageJson.main];
 }
 
+/**
+ * TypeDoc serializes the paths of files referenced by a package, such as images
+ * linked from the README, relative to the working directory that was used when
+ * generating the JSON. Since we generate the JSON from within each package
+ * directory, but merge the results from the repo root, we need to rebase these
+ * paths onto the repo root. Without this the files can't be found during the
+ * merge step, and links to them end up pointing at the source paths rather than
+ * the copies emitted into the docs output.
+ */
+function rebaseFileRegistry(docsJson: any, pkg: string) {
+  const entries = docsJson.files?.entries;
+  if (!entries) {
+    return;
+  }
+  const prefix = pkg.replace(/\\/g, '/');
+  for (const [id, filePath] of Object.entries(entries)) {
+    entries[id] = filePath ? `${prefix}/${filePath}` : prefix;
+  }
+}
+
 async function generateDocJson(pkg: string) {
   const temporaryTsConfigPath: string = await createTemporaryTsConfig(pkg);
 
@@ -194,6 +214,7 @@ export default async function packageDocs(paths: string[] = [], opts: any) {
       if (index) {
         index.name = 'index';
       }
+      rebaseFileRegistry(docsJson, pkg);
       await writeFile(docsJsonPath, JSON.stringify(docsJson, null, 2));
       generatedPackageDirs.push(pkg);
     } catch (e) {

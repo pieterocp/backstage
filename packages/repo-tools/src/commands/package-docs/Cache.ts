@@ -96,7 +96,7 @@ export class PackageDocsCache {
       return this.keyCache.get(pkg)!;
     }
     const name = await this.directoryToName(pkg);
-    const result = await globby('src/**', {
+    const result = await globby(['src/**', 'README*.md'], {
       gitignore: true,
       onlyFiles: true,
       cwd: pkg,
