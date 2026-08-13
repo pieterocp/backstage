@@ -22,7 +22,7 @@ import { exists, rm, mkdirp } from 'fs-extra';
 import { z } from 'zod/v3';
 import { CACHE_DIR, CACHE_FILE } from './constants';
 
-const version = '2';
+const version = '1';
 
 interface CacheEntry {
   hash: string;
